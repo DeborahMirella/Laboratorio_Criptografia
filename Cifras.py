@@ -1,47 +1,46 @@
-from Auxiliares import ALFABETO, Normaliza
+from Auxiliares import ALFABETO, NormalizaTexto
 
-def cesar_cifrar(texto, k):
+def CesarCifrar(texto, k):
 
-    Texto = Normaliza(texto)
-    Resultado = ""
-    for char in Texto:
+    texto_proc = NormalizaTexto(texto, manter_espacos=True)
+    resultado = ""
+    for char in texto_proc:
         if char in ALFABETO:
-            Original = ALFABETO.find(char)
-            Cifrada = (Original + k) % 26
-            Resultado += ALFABETO[Cifrada]
+            resultado += ALFABETO[(ALFABETO.find(char) + k) % 26]
         else:
-            Resultado += char
-    return Resultado
+            resultado += char
+    return resultado
 
-def cesar_decifrar(texto, k):
+def CesarDecifrar(texto, k):
 
-    return cesar_cifrar(texto, -k)
+    return CesarCifrar(texto, -k)
 
-def vigenere_cifrar(texto, chave):
+def VigenereCifrar(texto, chave_str):
 
-    Texto = Normaliza(texto)
-    Chave = Normaliza(chave).replace(' ', '')
-    Resultado = ""
-    Indice_Chave = 0
-
-    for char in Texto:
+    chave_proc = NormalizaTexto(chave_str)
+    key_indices = [ALFABETO.find(k) for k in chave_proc]
+    texto_proc = NormalizaTexto(texto, manter_espacos=True)
+    resultado, indice_chave = [], 0
+    for char in texto_proc:
         if char in ALFABETO:
-            Deslocamento = ALFABETO.find(Chave[Indice_Chave])
-            Original = ALFABETO.find(char)
-            Cifrada = (Original + Deslocamento) % 26
-            Resultado += ALFABETO[Cifrada]
-            Indice_Chave = (Indice_Chave + 1) % len(Chave)
+            deslocamento = key_indices[indice_chave % len(key_indices)]
+            resultado.append(ALFABETO[(ALFABETO.find(char) + deslocamento) % 26])
+            indice_chave += 1
         else:
-            Resultado += char
-    return Resultado
+            resultado.append(char)
+    return "".join(resultado)
 
-def vigenere_decifrar(texto, chave):
+def VigenereDecifrar(ciphertext, key_str):
 
-    Chave = Normaliza(chave).replace(' ', '')
-    Chave_Inversa = ""
-
-    for char in Chave:
-        Deslocamento = ALFABETO.find(char)
-        Deslocamento_Inverso = (26 - Deslocamento) % 26
-        Chave_Inversa += ALFABETO[Deslocamento_Inverso]
-    return vigenere_cifrar(texto, Chave_Inversa)
+    chave_proc = NormalizaTexto(key_str)
+    key_indices = [ALFABETO.find(k) for k in chave_proc]
+    texto_proc = NormalizaTexto(ciphertext, manter_espacos=True)
+    resultado, indice_chave = [], 0
+    for char in texto_proc:
+        if char in ALFABETO:
+            deslocamento = key_indices[indice_chave % len(key_indices)]
+            resultado.append(CesarDecifrar(char, deslocamento))
+            indice_chave += 1
+        else:
+            resultado.append(char)
+    return "".join(resultado)
