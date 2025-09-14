@@ -68,49 +68,7 @@ def EstimarTamanhoChaveIC(ciphertext, max_len=10):
             return resultado['tamanho']
 
     return resultados_ordenados[0]['tamanho']
-'''
-def QuebrarVigenereCompleto(ciphertext, num_candidatos_por_coluna=5):
- 
-    from Cifras import VigenereDecifrar
-
-    tamanho_chave = EstimarTamanhoChaveIC(ciphertext)
-    print(f"\nMelhor hipótese para o tamanho da chave: {tamanho_chave}\n")
-    
-    texto_limpo_analise = NormalizaTexto(ciphertext)
-    
-    print(f"Gerando os {num_candidatos_por_coluna} Melhores Candidatos por Coluna \n")
-    top_candidatos_por_coluna = []
-    for i in range(tamanho_chave):
-        coluna = texto_limpo_analise[i::tamanho_chave]
-        candidatos_coluna = AtaqueForcaBrutaCesar(coluna)
-        top_letras = [ALFABETO[c['chave']] for c in candidatos_coluna[:num_candidatos_por_coluna]]
-        top_candidatos_por_coluna.append(top_letras)
-        print(f"  Coluna {i}: Melhores letras candidatas -> {top_letras}")
-
-    chaves_a_testar = list(itertools.product(*top_candidatos_por_coluna))
-    total_combinacoes = len(chaves_a_testar)
-    print(f"\nTestando todas as {total_combinacoes} combinações de chaves")
-    
-    resultados_finais = []
-    for chave_tupla in chaves_a_testar:
-        chave_str = "".join(chave_tupla)
-        texto_decifrado = VigenereDecifrar(texto_limpo_analise, chave_str)
-        score = ScorePlausibilidade(texto_decifrado)
-        resultados_finais.append({'chave': chave_str, 'texto': texto_decifrado, 'score': score})
-        
-    melhor_solucao = sorted(resultados_finais, key=lambda x: x['score'], reverse=True)
-    
-    print("\nApresentando as 5 Melhores Soluções Encontradas")
-    print("\n Chave   | Score     | Amostra do Texto Decifrado")
-    print("---------|-----------|---------------------------------")
-    for resultado in melhor_solucao[:5]:
-        chave = resultado['chave'].upper()
-        score = resultado['score']
-        amostra = resultado['texto'][:25].upper()
-        print(f" {chave:<7} | {score:<9.2f} | {amostra}")
-
-    return melhor_solucao[0]
-'''
+   
 def QuebrarVigenereCompleto(ciphertext, num_candidatos_por_coluna=5):
     """Orquestra o ataque combinatório completo."""
     tamanho_chave = EstimarTamanhoChaveIC(ciphertext)
